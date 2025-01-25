@@ -1,0 +1,16 @@
+{
+  "name": "notesync_backend",
+  "version": "1.0.0",
+  "description": "noteSync - Your notes in sync with you",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "mongoose": "^8.9.5"
+  }
+}

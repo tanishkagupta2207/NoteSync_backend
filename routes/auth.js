@@ -4,6 +4,7 @@ const User = require("../models/User");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const fetchUser = require("../middleware/fetchUser");
 require("dotenv").config();
 
 //Create a User using: POST "/api/auth/createUser". No login required
@@ -96,5 +97,17 @@ router.post(
     }
   }
 );
+
+//Get User details using: POST "/api/auth/getUser". Login required
+router.post("/getUser",fetchUser,  async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId).select("-password");
+    res.send(user);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send("Internal error");
+  }
+});
 
 module.exports = router;

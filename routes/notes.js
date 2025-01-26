@@ -43,7 +43,7 @@ router.post(
   }
 );
 
-//Route 2 Update a note for a user. Login Required
+//Route 3 Update a note for a user. Login Required
 router.put(
   "/updateNote/:id",
   fetchUser,
@@ -76,8 +76,9 @@ router.put(
       let note = await Notes.findById(req.params.id);
 
       if (!note) {
-        res.status(404).send("Note not Found !");
+        return res.status(404).send("Note not Found !");
       }
+
       if (note.user.toString() !== req.user.id) {
         return res.status(401).send("Action not allowed");
       }
@@ -95,5 +96,36 @@ router.put(
     }
   }
 );
+
+//Route 4 Delete a note for a user. Login Required
+router.delete(
+    "/deleteNote/:id",
+    fetchUser,
+    async (req, res) => {
+      try {
+        
+        //find the note to delete
+        let note = await Notes.findById(req.params.id);
+  
+        if (!note) {
+          return res.status(404).send("Note not Found !");
+        }
+
+        // User is not the owner of the note
+        if (note.user.toString() !== req.user.id) {
+          return res.status(401).send("Action not allowed");
+        }
+  
+        note = await Notes.findByIdAndDelete(
+          req.params.id
+        );
+  
+        res.send("Note deleted successfully");
+      } catch (error) {
+        console.log(error.message);
+        res.status(500).send("Internal error");
+      }
+    }
+  );
 
 module.exports = router;

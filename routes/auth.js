@@ -40,14 +40,55 @@ router.post(
         password: secPswd,
       });
 
-      const data = {
+      const payload = {
         user: {
           id: user.id,
         },
       };
       //Creating token for authentication
-      const authToken = jwt.sign(data, process.env.REACT_APP_JWT_SECRET);
+      const authToken = jwt.sign(payload, process.env.REACT_APP_JWT_SECRET);
 
+      res.json({ authToken });
+    } catch (error) {
+      console.log(error.message);
+      res.status(500).send("Internal error");
+    }
+  }
+);
+
+//Authenticate a User using: POST "/api/auth/login". No login required
+router.post(
+  "/login",
+  [
+    body("email", "Enter a valid email").isEmail(),
+    body("password", "Password cannot be blank").exists(),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { email, password } = req.body;
+    try {
+      let user = await User.findOne({ email });
+      if (!user) {
+        return res
+          .status(400)
+          .json({ error: "Please try to login using correct credentials" });
+      }
+      const pswdCompare = await bcrypt.compare(password, user.password);
+      if (!pswdCompare) {
+        return res
+          .status(400)
+          .json({ error: "Please try to login using correct credentials" });
+      }
+      const payload = {
+        user: {
+          id: user.id,
+        },
+      };
+      const authToken = jwt.sign(payload, process.env.REACT_APP_JWT_SECRET);
       res.json({ authToken });
     } catch (error) {
       console.log(error.message);

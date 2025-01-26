@@ -2,6 +2,9 @@ const express = require("express");
 const router = require("express").Router();
 const User = require("../models/User");
 const { body, validationResult } = require("express-validator");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 //Create a User using: POST "/api/auth/createUser". No login required
 router.post(
@@ -27,16 +30,25 @@ router.post(
           .status(400)
           .json({ error: "User with this email already exists" });
       }
+      const salt = await bcrypt.genSalt(10);
+      secPswd = await bcrypt.hash(req.body.password, salt);
 
       //Create a new user
       user = await User.create({
         name: req.body.name,
         email: req.body.email,
-        password: req.body.password,
+        password: secPswd,
       });
 
-      res.send(user);
+      const data = {
+        user: {
+          id: user.id,
+        },
+      };
+      //Creating token for authentication
+      const authToken = jwt.sign(data, process.env.REACT_APP_JWT_SECRET);
 
+      res.json({ authToken });
     } catch (error) {
       console.log(error.message);
       res.status(500).send("Internal error");

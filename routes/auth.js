@@ -18,9 +18,10 @@ router.post(
     }),
   ],
   async (req, res) => {
+    let success = false;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({success, errors: errors.array() });
     }
 
     try {
@@ -29,7 +30,7 @@ router.post(
       if (user) {
         return res
           .status(400)
-          .json({ error: "User with this email already exists" });
+          .json({success, msg: "User with this email already exists" });
       }
       const salt = await bcrypt.genSalt(10);
       secPswd = await bcrypt.hash(req.body.password, salt);
@@ -48,11 +49,11 @@ router.post(
       };
       //Creating token for authentication
       const authToken = jwt.sign(payload, process.env.REACT_APP_JWT_SECRET);
-
-      res.json({ authToken });
+      success = true;
+      res.json({success, authToken });
     } catch (error) {
       console.log(error.message);
-      res.status(500).send("Internal error");
+      res.status(500).json({success, msg:"Internal error"});
     }
   }
 );
@@ -65,9 +66,10 @@ router.post(
     body("password", "Password cannot be blank").exists(),
   ],
   async (req, res) => {
+    let success = false;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({success, errors: errors.array() });
     }
 
     const { email, password } = req.body;
@@ -76,13 +78,13 @@ router.post(
       if (!user) {
         return res
           .status(400)
-          .json({ error: "Please try to login using correct credentials" });
+          .json({success, msg: "Please try to login using correct credentials" });
       }
       const pswdCompare = await bcrypt.compare(password, user.password);
       if (!pswdCompare) {
         return res
           .status(400)
-          .json({ error: "Please try to login using correct credentials" });
+          .json({success, msg: "Please try to login using correct credentials" });
       }
       const payload = {
         user: {
@@ -90,10 +92,11 @@ router.post(
         },
       };
       const authToken = jwt.sign(payload, process.env.REACT_APP_JWT_SECRET);
-      res.json({ authToken });
+      success = true;
+      res.json({success, authToken });
     } catch (error) {
       console.log(error.message);
-      res.status(500).send("Internal error");
+      res.status(500).json({success, msg:"Internal error"});
     }
   }
 );
@@ -101,12 +104,14 @@ router.post(
 //Get User details using: POST "/api/auth/getUser". Login required
 router.post("/getUser",fetchUser,  async (req, res) => {
   try {
+    let success = false;
     const userId = req.user.id;
     const user = await User.findById(userId).select("-password");
-    res.send(user);
+    success = true;
+    res.json({success, user});
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Internal error");
+    res.status(500).json({success, msg: "Internal error"});
   }
 });
 

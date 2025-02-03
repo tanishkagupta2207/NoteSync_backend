@@ -6,12 +6,14 @@ const { body, validationResult } = require("express-validator");
 
 //Route 1 fetch all notes for a user. Login Required
 router.get("/fetchAllNotes", fetchUser, async (req, res) => {
+  let success = false;
   try {
     const notes = await Notes.find({ user: req.user.id });
-    res.json(notes);
+    success = true;
+    res.json({success, notes});
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Internal error");
+    res.status(500).json({success, msg: "Internal error"});
   }
 });
 
@@ -27,18 +29,20 @@ router.post(
   ],
 
   async (req, res) => {
+    let success = false;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({success, errors: errors.array() });
     }
     try {
       const { title, description, tag } = req.body;
       const note = new Notes({ title, description, tag, user: req.user.id });
       const savedNote = await note.save();
-      res.json(savedNote);
+      success = true;
+      res.json({success, note: savedNote});
     } catch (error) {
       console.log(error.message);
-      res.status(500).send("Internal error");
+      res.status(500).json({success,msg: "Internal error"});
     }
   }
 );
@@ -54,9 +58,10 @@ router.put(
     }),
   ],
   async (req, res) => {
+    let success = false;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json( {success, errors: errors.array() });
     }
     try {
       const { title, description, tag } = req.body;
@@ -76,11 +81,11 @@ router.put(
       let note = await Notes.findById(req.params.id);
 
       if (!note) {
-        return res.status(404).send("Note not Found !");
+        return res.status(404).json({success,msg: "Note not Found !"});
       }
 
       if (note.user.toString() !== req.user.id) {
-        return res.status(401).send("Action not allowed");
+        return res.status(401).json({success,msg: "Action not allowed"});
       }
 
       note = await Notes.findByIdAndUpdate(
@@ -88,11 +93,11 @@ router.put(
         { $set: newNote },
         { new: true }
       );
-
-      res.json({ note });
+      success = true;
+      res.json({success, note });
     } catch (error) {
       console.log(error.message);
-      res.status(500).send("Internal error");
+      res.status(500).json({success,msg: "Internal error"});
     }
   }
 );
@@ -102,28 +107,29 @@ router.delete(
     "/deleteNote/:id",
     fetchUser,
     async (req, res) => {
+      let success = false;
       try {
         
         //find the note to delete
         let note = await Notes.findById(req.params.id);
   
         if (!note) {
-          return res.status(404).send("Note not Found !");
+          return res.status(404).json({success,msg: "Note not Found !"});
         }
 
         // User is not the owner of the note
         if (note.user.toString() !== req.user.id) {
-          return res.status(401).send("Action not allowed");
+          return res.status(401).json({success,msg: "Action not allowed"});
         }
   
         note = await Notes.findByIdAndDelete(
           req.params.id
         );
-  
-        res.send("Note deleted successfully");
+        success = true;
+        res.json({success,msg: "Note deleted successfully"});
       } catch (error) {
         console.log(error.message);
-        res.status(500).send("Internal error");
+        res.status(500).json({success,msg: "Internal error"});
       }
     }
   );

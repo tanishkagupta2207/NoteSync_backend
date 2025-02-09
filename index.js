@@ -9,7 +9,7 @@ const port = 5000
 
 app.use(express.json());
 const corsOptions = {
-  origin: 'https://p2p-file-share-frontend.vercel.app',  // Only allow your frontend to access the backend
+  origin: 'https://note-sync-frontend.vercel.app/',  // Only allow your frontend to access the backend
   methods: ['GET', 'POST'],  // Allow GET and POST requests
   allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token'],  // Allow these headers in requests
 };

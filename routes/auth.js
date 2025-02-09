@@ -102,11 +102,14 @@ router.post(
 );
 
 //Get User details using: POST "/api/auth/getUser". Login required
-router.post("/getUser",fetchUser,  async (req, res) => {
+router.get("/getUser",fetchUser,  async (req, res) => {
   try {
     let success = false;
     const userId = req.user.id;
     const user = await User.findById(userId).select("-password");
+    if(!user){
+      return res.status(404).json({success, msg: "User Not Found"});
+    }
     success = true;
     res.json({success, user});
   } catch (error) {

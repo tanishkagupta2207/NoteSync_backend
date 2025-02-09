@@ -83,6 +83,10 @@ We welcome contributions to the NoteSync Backend project! If you have any ideas,
 4. Push to the branch (`git push origin feature/your-feature`).
 5. Open a pull request.
 
+## 📝 NOTE 
+
+This repository contains only the backend code for the NoteSync application. To have a fully functional application, you will also need the frontend repository. Please refer to the NoteSync Frontend repository [here](https://github.com/tanishkagupta2207/NoteSync_frontend) to set up the complete application.
+
 ## 🙏 Acknowledgements
 
 - **MongoDB Atlas** for providing the database hosting.

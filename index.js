@@ -11,7 +11,7 @@ app.use(express.json());
 const corsOptions = {
   origin: 'https://note-sync-frontend.vercel.app',  // Only allow your frontend to access the backend
   methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Allow GET and POST requests
-  allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token'],  // Allow these headers in requests
+  allowedHeaders: ['Content-Type', 'Authorization', 'auth-token'],  // Allow these headers in requests
 };
 
 app.use(cors(corsOptions));

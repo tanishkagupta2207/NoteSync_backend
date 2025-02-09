@@ -98,6 +98,7 @@ This repository contains only the backend code for the NoteSync application. To 
 
 ## 🙏 Acknowledgements
 
+- **Vercel** for providing hosting options.
 - **MongoDB Atlas** for providing the database hosting.
 - **React** for the awesome library.
 - **Bootstrap** for the responsive design framework.

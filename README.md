@@ -40,15 +40,24 @@ To get started with the NoteSync Backend, follow these steps:
     ```bash
     npm install
     ```
+3. **Update CorsOptions:**
+    Update origin value in corsOptions in index.js file to your frontend base url
+    ```
+    const corsOptions = {
+        origin: your_base_frontend_url,  // Only allow your frontend to access the backend
+        methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Allow GET and POST requests
+        allowedHeaders: ['Content-Type', 'Authorization', 'auth-token'],  // Allow these headers in requests
+    };
+    ```
 
-3. **Set up environment variables:**
+4. **Set up environment variables:**
     Create a `.env` file in the root directory and add the necessary environment variables:
     ```env
     REACT_APP_DB_URL=your_database_url
     REACT_APP_JWT_SECRET=your_jwt_secret
     ```
 
-4. **Run the server:**
+5. **Run the server:**
     ```bash
     node index.js
     ```
@@ -71,7 +80,7 @@ Here are some of the key API endpoints available:
 
 ## 🎥 Demo
 
-Check out our live demo [here](#).
+Check out our live demo [here](https://note-sync-backend-beige.vercel.app/).
 
 ## 🤝 Contributing
 
